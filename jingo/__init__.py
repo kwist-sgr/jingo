@@ -11,6 +11,7 @@ from django.conf import settings
 from django.template.base import Origin, TemplateDoesNotExist
 from django.template.context import get_standard_processors
 from django.template.loader import BaseLoader
+from django.utils import translation
 from django.utils.importlib import import_module
 
 import jinja2
@@ -70,7 +71,7 @@ def get_env():
     # testing.
     if ('jinja2.ext.i18n' in e.extensions or
             'jinja2.ext.InternationalizationExtension' in e.extensions):
-        e.install_null_translations()
+        e.install_gettext_translations(translation)
     return e
 
 

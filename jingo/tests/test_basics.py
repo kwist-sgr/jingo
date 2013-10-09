@@ -1,9 +1,10 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
+from django.utils import translation
 import jinja2
 
-from nose.tools import eq_
+from nose.tools import eq_, ok_
 try:
     from unittest.mock import Mock, patch, sentinel
 except ImportError:
@@ -40,3 +41,15 @@ def test_inclusion_tag(get_template):
     get_template.return_value = jinja2.environment.Template('<{{ z }}>')
     t = jingo.env.from_string('{{ tag(1) }}')
     eq_('<1>', t.render())
+
+
+def test_gettext_translations():
+    env = jingo.get_env()
+    ok_('jinja2.ext.i18n' in env.extensions or
+        'jinja2.ext.InternationalizationExtension' in env.extensions)
+    gettext = getattr(translation, 'ugettext', None)
+    ok_(gettext)
+    ok_(env.globals['gettext'] == gettext)
+    ngettext = getattr(translation, 'ungettext', None)
+    ok_(ngettext)
+    ok_(env.globals['ngettext'] == ngettext)
